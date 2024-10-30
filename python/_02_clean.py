@@ -7,6 +7,8 @@ from IPython.display import display
 import pandas as pd
 from sklearn.impute import KNNImputer
 
+import os
+from _99_functions import get_project_root
 
 def clean():
 
