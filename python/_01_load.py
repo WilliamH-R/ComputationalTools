@@ -6,10 +6,14 @@ import pandas as pd
 from IPython.display import display
 
 def load():
+
+    # Set the project root folder
+    project_root = get_project_root()
+    os.chdir(project_root)
     
     ### Define the file paths
-    file_path_1 = './_raw/Supplementary data 1.xlsx'
-    file_path_2 = './_raw/Supplementary data 2.xlsx'
+    file_path_1 = '_raw/Supplementary data 1.xlsx'
+    file_path_2 = '_raw/Supplementary data 2.xlsx'
 
     ### Load data
     data = pd.read_excel(file_path_1)

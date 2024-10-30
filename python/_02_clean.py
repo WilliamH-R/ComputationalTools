@@ -10,6 +10,10 @@ from sklearn.impute import KNNImputer
 
 def clean():
 
+    # Set the project root folder
+    project_root = get_project_root()
+    os.chdir(project_root)
+
     data , bm_meta_data = load()
 
     ### Set the index of the data DataFrame to be the subject_ID
