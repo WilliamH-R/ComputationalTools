@@ -48,3 +48,18 @@ def kmeans_clustering(df, n_clusters):
     return kmeans
 
 kmeans_clustering(pcs_df, 2)
+# To authenticate your git login in VSCode using the terminal, you can use the following commands:
+
+# 1. Open the terminal in VSCode (View -> Terminal or use the shortcut Ctrl+`).
+
+# 2. Configure your git username and email if you haven't already:
+# git config --global user.name "Your Name"
+# git config --global user.email "your.email@example.com"
+
+# 3. Authenticate with GitHub using a personal access token:
+# git remote set-url origin https://<your_token>@github.com/your_username/your_repository.git
+
+# 4. Push your changes:
+# git add .
+# git commit -m "Your commit message"
+# git push origin main
