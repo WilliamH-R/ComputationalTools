@@ -73,6 +73,7 @@ def clean():
 
     ### Save cleaned df
     data_bm.to_csv('data/cleaned.csv', index=False)
+    data_non_bm.to_csv('data/non_bm.csv', index=False)
 
     ### Return dataframe
-    return data_bm, bm_dict
+    return data_bm, bm_dict, data_non_bm
