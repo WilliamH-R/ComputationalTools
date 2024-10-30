@@ -1,22 +1,18 @@
 #%%
 import pandas as pd
 from mlxtend import frequent_patterns as fp
-from mlxtend.preprocessing import TransactionEncoder
 import numpy as np
-
+import networkx as nx
+from matplotlib import pyplot as plt
 
 #%%
 # Load and process data
 df_clean = pd.read_csv('../data/cleaned.csv')
 df_clean = df_clean.apply(lambda x: np.where(x > x.median(), 1, 0)).astype(bool)
-
 df_meta  = pd.read_csv('../data/non_bm.csv')[['TYPE']].astype(bool)
-
 
 # concatenate dataframes
 df = pd.concat([df_clean, df_meta], axis=1)
-
-
 df
 #%%
 # Apply apriori algorithm (get itemsets)
@@ -41,37 +37,42 @@ top_rules_cons = df_conf[df_conf['consequents'].apply(lambda x: 'TYPE' in x)].so
 top_rules_ante = df_conf[df_conf['antecedents'].apply(lambda x: 'TYPE' in x)].sort_values('interest', ascending=False)[:30]
 
 top_rules = pd.concat([top_rules_cons, top_rules_ante]).drop_duplicates()
+top_rules
 
 #%%
-import networkx as nx
-from matplotlib import pyplot as plt
-
 G = nx.Graph()
 
 # Add nodes and edges
+unique_nodes = set()
 for _, row in top_rules.iterrows():
     for antecedent in row['antecedents']:
         for consequent in row['consequents']:
             if antecedent == 'TYPE':
                 color = 'red'
+                unique_nodes.add(consequent)
             elif consequent == 'TYPE':
                 color = 'lime'
+                unique_nodes.add(antecedent)
             else:
                 color = 'black'
             G.add_edge(antecedent, consequent, color=color)
+            
+          
 
-# Step 4: Define the layout with "TYPE" at the center
+# Define the layout with "TYPE" at the center
 n_nodes = len(G.nodes) - 1  # Exclude "TYPE" from the circle count
 angles = np.linspace(0, 2 * np.pi, n_nodes, endpoint=False)
 pos = {"TYPE": (0, 0)}  # Position "TYPE" at the center
 pos.update({node: (np.cos(angle), np.sin(angle)) for node, angle in zip(G.nodes - {"TYPE"}, angles)})
 
-# Step 5: Draw the graph
+# Draw the graph
 plt.figure(figsize=(8, 8))
 nx.draw(G, pos, with_labels=True, node_size=2000, node_color='lightblue', font_size=10, font_weight='bold')
 
 # add edge and increase size of arrow head
 edge_colors = nx.get_edge_attributes(G, 'color').values()
 nx.draw_networkx_edges(G, pos, edge_color=edge_colors, width=2)
-
 plt.show()
+
+#%%
+list(unique_nodes)
