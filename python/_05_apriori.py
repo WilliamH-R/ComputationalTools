@@ -11,6 +11,8 @@ df_clean = pd.read_csv('../data/cleaned.csv')
 df_clean = df_clean.apply(lambda x: np.where(x > x.median(), 1, 0)).astype(bool)
 df_meta  = pd.read_csv('../data/non_bm.csv')[['TYPE']].astype(bool)
 
+df_meta = ~df_meta  # Invert the values
+
 # concatenate dataframes
 df = pd.concat([df_clean, df_meta], axis=1)
 df
@@ -33,8 +35,8 @@ df_conf.sort_values('interest', ascending=False)
 
 #%% 
 # only show consequents and antecedents that contain 'TYPE'
-top_rules_cons = df_conf[df_conf['consequents'].apply(lambda x: 'TYPE' in x)].sort_values('interest', ascending=False)[:30]
-top_rules_ante = df_conf[df_conf['antecedents'].apply(lambda x: 'TYPE' in x)].sort_values('interest', ascending=False)[:30]
+top_rules_cons = df_conf[df_conf['consequents'].apply(lambda x: 'TYPE' in x)].sort_values('interest', ascending=False)[:10]
+top_rules_ante = df_conf[df_conf['antecedents'].apply(lambda x: 'TYPE' in x)].sort_values('interest', ascending=False)[:10]
 
 top_rules = pd.concat([top_rules_cons, top_rules_ante]).drop_duplicates()
 top_rules
@@ -76,3 +78,4 @@ plt.show()
 
 #%%
 list(unique_nodes)
+# %%
