@@ -41,9 +41,15 @@ def load():
     # print("---------------------------\n")
 
     ### Save raw
+    if not os.path.exists("data"):
+        os.makedirs("data")
     data.to_csv("data/raw.csv", index=False)
     bm_meta_data.to_csv("data/meta.csv", index=False)
 
     ### Return df
     return data, bm_meta_data
+
+
+if __name__ == "__main__":
+    df, df_meta = load()
 

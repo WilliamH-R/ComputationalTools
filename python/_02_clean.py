@@ -83,3 +83,6 @@ def clean():
 
     ### Return dataframe
     return data_bm, bm_dict, data_non_bm
+
+if __name__ == "__main__":
+    df_bm, bm_dict, df_non_bm = clean()
