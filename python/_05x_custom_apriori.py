@@ -27,57 +27,49 @@ df_fp
 
 #%% 
 
+import pandas as pd
+from itertools import combinations
+
 def apriori(df, min_support=0.1, max_len=5):
-    
     N = len(df)
     K = max_len
 
-    # calculate support for singleton sets
-    itemsets_k = {1:[]}
-    supports_k = {1:[]}
-    single_items = []
+    # Precompute support for single items and filter based on min_support
+    itemsets_k = {1: []}
+    supports_k = {1: []}
+    frequent_items = []
     for col in df.columns:
         support = df[col].sum() / N
         if support >= min_support:
-            itemsets_k[1].append(set([col]))
+            itemsets_k[1].append(frozenset([col]))
             supports_k[1].append(support)
-            single_items.append(col)
+            frequent_items.append(col)
 
-    # generate candidate pairs
-    M = len(itemsets_k[1])
-    itemsets_k[2] = []
-    supports_k[2] = []
-    for i in range(M):
-        for j in range(i+1, M):
-            support = (df[single_items[i]] & df[single_items[j]]).sum() / N
-            if support >= min_support:
-                itemsets_k[2].append(set([single_items[i], single_items[j]]))
-                supports_k[2].append(support)
-    
-    for k in range(2,K):
-        itemsets_k[k+1] = []
-        supports_k[k+1] = []
-        for itemset_k in itemsets_k[k]:
-            for itemset_1 in itemsets_k[1]:
-                new_set = itemset_k.union(itemset_1)
-                if len(new_set) > k:                 
-                    support = (df[[item for item in new_set]].sum(axis=1) == k+1).sum() / N
-                    if support >= min_support:
-                        itemsets_k[k+1].append(new_set)
-                        supports_k[k+1].append(support)
-        break
+    # Generate itemsets for lengths k > 1
+    for k in range(2, K + 1):
+        itemsets_k[k] = []
+        supports_k[k] = []
+        candidates = [i.union(j) for i in itemsets_k[k - 1] for j in itemsets_k[1] if len(i.union(j)) == k]
+        candidates = set(candidates)  # Remove duplicate candidates
 
+        for candidate in candidates:
+            candidate_support = (df[list(candidate)].sum(axis=1) == k).sum() / N
+            if candidate_support >= min_support:
+                itemsets_k[k].append(candidate)
+                supports_k[k].append(candidate_support)
 
+        # Break if no further itemsets meet min_support
+        if not itemsets_k[k]:
+            break
 
-
-    itemsets, supports = [],[]
-    for k in itemsets_k:
-        itemsets.extend(itemsets_k[k])
-        supports.extend(supports_k[k])
-    
-    # Create the dataframe
+    # Flatten the results into a DataFrame
+    itemsets = [itemset for k in itemsets_k for itemset in itemsets_k[k]]
+    supports = [support for k in supports_k for support in supports_k[k]]
     df_fp = pd.DataFrame({'itemsets': itemsets, 'support': supports})
+    
     return df_fp
+
+#%%
 
 df_fp = apriori(df, min_support=0.1, max_len=5)
 df_fp
