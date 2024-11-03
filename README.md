@@ -6,3 +6,6 @@ This is a repository for our course Computational Tools for Data Science at DTU
 
 ## 8 Features
 Menopause, Age, AFP, CEA, HE4, CA19-9, LYM%, and CO2CP 
+
+## 2 Features
+HE4 & CEA
