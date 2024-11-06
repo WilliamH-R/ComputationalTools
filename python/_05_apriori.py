@@ -17,23 +17,19 @@ df = pd.concat([df_clean, df_meta], axis=1).astype(bool)
 df = df[df['Menopause'] == False].drop('Menopause', axis=1)
 
 # Apply apriori algorithm (get itemsets)
-df_fp = fp.apriori(df, min_support=0.1, use_colnames=True)
+df_fp = fp.apriori(df, min_support=0.1, use_colnames=True,max_len=3)
 df_fp
-
-# Find itemsets of fixed length
-df_fp['length'] = df_fp['itemsets'].apply(len)
-df_fp_len2 = df_fp[df_fp['length'] == 2]
 
 # Find association rules (compute association metrics, given itemsets)
 df_conf = fp.association_rules(df_fp, metric='confidence', min_threshold=0.001)
 df_conf['interest'] = df_conf['confidence'] - df_conf['support']
 
 # only show consequents and antecedents that contain 'TYPE'
-top_rules = df_conf[df_conf['consequents'].apply(lambda x: 'TYPE' in x)].sort_values('confidence', ascending=False)
-top_rules = top_rules[top_rules['confidence']<0.9][:30]
+top_rules = df_conf[df_conf['consequents'].apply(lambda x: 'TYPE' in x)].sort_values('zhangs_metric', ascending=False)
+top_rules = top_rules[top_rules['confidence']<1][:30]
 
 #%% 
-top_rules[['antecedents', 'consequents', 'antecedent support', 'consequent support','support','confidence']]
+top_rules#[['antecedents', 'consequents', 'antecedent support', 'consequent support','support','confidence']]
 
 #%%
 G = nx.Graph()

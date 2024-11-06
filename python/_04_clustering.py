@@ -1,3 +1,4 @@
+#%%
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -48,3 +49,5 @@ def kmeans_clustering(df, n_clusters):
     return kmeans
 
 kmeans_clustering(pcs_df, 2)
+
+# %%
