@@ -1,6 +1,6 @@
 Apriori attributes
 ------------------
-ALB, HGB, RBC, TP
+ALB, LYM#, BASO%, LYM%
 
 
 
