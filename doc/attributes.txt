@@ -1,0 +1,20 @@
+Apriori attributes
+------------------
+ALB, HGB, RBC, TP
+
+
+
+
+
+PCA attributes
+--------------
+
+
+
+
+
+Paper attributes
+----------------
+Menopause, Age, AFP, CEA, HE4, CA19-9, LYM%, and CO2CP
+HE4 & CEA
+

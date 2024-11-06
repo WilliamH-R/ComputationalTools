@@ -15,7 +15,7 @@ df = pd.concat([df_clean, df_meta], axis=1).astype(bool)
 df = df[df['Menopause'] == False].drop('Menopause', axis=1)
 
 # Apply apriori algorithm (get itemsets)
-df_fp = fp.apriori(df, min_support=0.1, use_colnames=True, max_len=5)
+df_fp = fp.apriori(df, min_support=0.1, use_colnames=True)
 df_fp
 
 # Find itemsets of fixed length
