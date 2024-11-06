@@ -4,13 +4,17 @@ import os
 import pandas as pd
 import numpy as np
 from sklearn.cluster import KMeans
-from sklearn.metrics import confusion_matrix, roc_curve, auc
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, roc_curve, auc
+from sklearn.cluster import AgglomerativeClustering
+from sklearn import linear_model
 from sklearn.preprocessing import label_binarize
+from sklearn.tree import DecisionTreeClassifier
 import matplotlib.pyplot as plt
 from scipy.optimize import linear_sum_assignment
 
 # Function for getting the project root folder
 from pathlib import Path
+
 def get_project_root():
     """Returns the project root folder."""
     # Start from the current file's directory or notebook's location
@@ -27,6 +31,9 @@ def get_project_root():
 # Set the project root folder
 project_root = get_project_root()
 os.chdir(project_root)
+
+#path to save images
+path_to_save = 'results/models'
 
 # Load data frames
 age_type_menopause = pd.read_csv('data/non_bm.csv')
@@ -45,7 +52,7 @@ test_labels_df = age_type_menopause["TYPE"].iloc[235:]
 subsets = [
     data.columns.tolist(),                                                # All features
     ["ALB", "HGB", "RBC", "TP"],                                          # Apriori subset
-    ["LYM%", "LYM#", "ALB", "HCT", "HGB", "IBIL", "TBIL", "DBIL"],        # PCA subset
+    ['ALB', 'HGB', 'HCT', 'LYM%', 'BASO%', 'PCT', 'TP', 'PLT'],           # PCA subset
     ["Menopause", "Age", "AFP", "CEA", "HE4", "CA19-9", "LYM%", "CO2CP"], # Article, 8 subset
     ["HE4", "CEA"]                                                        # Article, 2 subset
     # Add more subsets as needed
@@ -74,35 +81,61 @@ for i, subset in enumerate(subsets):
     train_subset = train_df[subset]
     test_subset = test_df[subset]
     
-    # Initialize and fit k-means on the training subset
-    kmeans = KMeans(n_clusters=2, random_state=42)  # Use 2 clusters for binary
-    kmeans.fit(train_subset)
-    
-    # Predict cluster labels on the test subset
-    test_kmeans_labels = kmeans.predict(test_subset)
-    
-    # Align test cluster labels to true test labels using the Hungarian algorithm
-    test_cm = confusion_matrix(test_labels_encoded, test_kmeans_labels)
-    row_ind, col_ind = linear_sum_assignment(-test_cm)
-    aligned_test_labels = np.zeros_like(test_kmeans_labels)
-    for k in range(2):
-        aligned_test_labels[test_kmeans_labels == col_ind[k]] = k
-    
-    # Confusion matrix after alignment
-    aligned_test_cm = confusion_matrix(test_labels_encoded, aligned_test_labels)
-    print(f"Confusion Matrix for Subset {i+1} (Test Set):")
-    print(aligned_test_cm)
-    
-    # Compute ROC curve and AUC
-    fpr, tpr, _ = roc_curve(test_labels_encoded, aligned_test_labels)
-    roc_auc = auc(fpr, tpr)
-    
-    # Plot ROC curve
-    plt.figure(figsize=(6, 6))
-    plt.plot(fpr, tpr, color='blue', label=f'AUC = {roc_auc:.2f}')
-    plt.plot([0, 1], [0, 1], 'k--', lw=2)
+    # Define a dictionary of models to evaluate
+    models = {
+        "K-Means": KMeans(n_clusters=2, random_state=42),
+        "Logistic Regression": linear_model.LogisticRegression(class_weight='balanced'),
+        "Regression Tree": DecisionTreeClassifier(random_state=42),
+        "Hierarchical Clustering": AgglomerativeClustering(n_clusters=2, linkage='ward')
+    }
+
+    # Function to align cluster labels to true labels using the Hungarian algorithm
+    def align_labels(true_labels, predicted_labels):
+        cm = confusion_matrix(true_labels, predicted_labels)
+        row_ind, col_ind = linear_sum_assignment(-cm)
+        aligned_labels = np.zeros_like(predicted_labels)
+        for k in range(2):
+            aligned_labels[predicted_labels == col_ind[k]] = k
+        return aligned_labels
+
+    # Evaluate each model
+    for model_name, model in models.items():
+        # Fit the model
+        model.fit(train_subset, train_labels_encoded)
+        
+        # Predict the response for the test dataset
+        if model_name == "K-Means":
+            y_pred = model.predict(test_subset)
+            y_pred = align_labels(test_labels_encoded, y_pred)
+        elif model_name == "Hierarchical Clustering":
+            y_pred = model.fit_predict(test_subset)
+            y_pred = align_labels(test_labels_encoded, y_pred)
+        else:
+            y_pred = model.predict(test_subset)
+        
+        # Evaluate the model
+        accuracy = accuracy_score(test_labels_encoded, y_pred)
+        conf_matrix = confusion_matrix(test_labels_encoded, y_pred)
+        class_report = classification_report(test_labels_encoded, y_pred)
+        
+        print(f'Accuracy ({model_name}): {accuracy}')
+        print(f'Confusion Matrix ({model_name}):')
+        print(conf_matrix)
+        print(f'Classification Report ({model_name}):')
+        print(class_report)
+        
+        # Compute ROC curve and AUC
+        fpr, tpr, _ = roc_curve(test_labels_encoded, y_pred)
+        roc_auc = auc(fpr, tpr)
+        
+        # Plot ROC curve
+        plt.plot(fpr, tpr, label=f'{model_name} AUC = {roc_auc:.2f}')
+
+    # Finalize the ROC plot
+    plt.plot([0, 1], [0, 1], 'k--', lw=3)
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
     plt.title(f'ROC Curve for Subset {i+1} (Test Set)')
     plt.legend(loc="lower right")
-    plt.show()
+    plt.savefig(f'{path_to_save}/roc_subset_{i+1}.png')
+    plt.close()
