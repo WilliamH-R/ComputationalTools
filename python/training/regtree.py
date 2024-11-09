@@ -12,8 +12,18 @@ df_test  = df.iloc[235:]
 df_meta_train = df_meta.iloc[:235]
 df_meta_test  = df_meta.iloc[235:]
 
+# Perform SMOTE
+from imblearn.over_sampling import SMOTE
+sm = SMOTE(random_state=42)
+df_train, df_meta_train = sm.fit_resample(df_train, df_meta_train)
+df_test, df_meta_test = sm.fit_resample(df_test, df_meta_test)
+
+
+
+
 # attributes = ['HE4', 'CEA']
-attributes = ['LYM#','LYM%','HGB','RBC','DBIL']
+attributes = ['UA','CEA','AST','GLO','BUN','HE4']
+attributes = ['HE4','LYM%','Ca','PDW','GLO']
 
 # %%
 # classification tree
@@ -21,30 +31,30 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 
 # Create a decision tree classifier
-clf = DecisionTreeClassifier(max_depth=2)
+clf = DecisionTreeClassifier(max_depth=5) 
+# clf = RandomForestClassifier(n_estimators=1000, max_depth=10, class_weight='balanced')
 
 # Train the classifier
 clf.fit(df_train[attributes], df_meta_train['TYPE'])
 
-#&&
 # Performance
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 # Predict on test data
 pred = clf.predict(df_test[attributes])
-accuracy_score(df_meta_test['TYPE'], pred)
+print("Accuracy:",accuracy_score(df_meta_test['TYPE'], pred))
 
-# # Confusion matrix
-# from sklearn.metrics import confusion_matrix
-
-# confusion_matrix(df_meta_test['TYPE'], pred)
-
-# %%
-# Plot the decision tree
-from sklearn.tree import plot_tree
-import matplotlib.pyplot as plt
-
-plt.figure(figsize=(20,10))
-plot_tree(clf, filled=True, feature_names=df_train.columns, class_names=['Non-Benign', 'Benign'])
+# confusion matrix
+cm = confusion_matrix(df_meta_test['TYPE'], pred)
+sns.heatmap(cm, annot=True)
+plt.xlabel('Predicted')
+plt.ylabel('True')
 plt.show()
+
+
+
+
 # %%
