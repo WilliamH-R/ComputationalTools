@@ -101,6 +101,10 @@ def plot_pca_cont_w_loadings(pcs_df, pca, features, color, save_path, top_n=8, s
 project_root = get_project_root()
 os.chdir(project_root)
 
+# Path to save images, either predfined split or custom split
+path_to_save = 'results/pca_pre_split' # 'results/models_custom_split'
+os.makedirs(path_to_save, exist_ok=True)
+
 # Load data
 age_type_menopause = pd.read_csv('data/non_bm.csv')
 age_type_menopause['TYPE'] = age_type_menopause['TYPE'].replace({0: 'Benign Ovarian Tumor', 1: 'Ovarian Cancer'})
@@ -142,7 +146,7 @@ plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 plt.ylim(0, 1.1)
 plt.grid(True)
 #plt.show()
-plt.savefig('results/cumulative_explained_variance.png')
+plt.savefig(f"{path_to_save}/cumulative_explained_variance.png")
 plt.close()
 
 # %%
@@ -166,7 +170,7 @@ plt.title('Feature Contributions to PC1 and PC2')
 plt.gca().invert_yaxis()  # To have the largest loading at the top
 plt.tight_layout()
 # plt.show()
-plt.savefig('results/pca_loadings_magnitude.png')
+plt.savefig(f"{path_to_save}/pca_loadings_magnitude.png")
 plt.close()
 
 # From the loadings magnitude plot, we see a drop after the first 8 features. Thus, we will only plot the top 8 loadings.
@@ -179,7 +183,7 @@ plot_pca_cat_w_loadings(pcs_df = pcs_df,
                         pca = pca,
                         features = df_scaled.columns,
                         color = 'TYPE',
-                        save_path = 'results/pc1_vs_pc2_type.png',
+                        save_path = f"{path_to_save}/pc1_vs_pc2_type.png",
                         top_n=8)
 
 # %%
@@ -188,7 +192,7 @@ plot_pca_cat_w_loadings(pcs_df = pcs_df,
                         pca = pca,
                         features = df_scaled.columns,
                         color = 'Menopause',
-                        save_path = 'results/pc1_vs_pc2_menopause.png',
+                        save_path = f"{path_to_save}/pc1_vs_pc2_menopause.png",
                         top_n=8)
 
 # %%
@@ -197,7 +201,7 @@ plot_pca_cont_w_loadings(pcs_df = pcs_df,
                          pca = pca,
                          features = df_scaled.columns,
                          color = 'Age',
-                         save_path = 'results/pc1_vs_pc2_age.png',
+                         save_path = f"{path_to_save}/pc1_vs_pc2_age.png",
                          top_n=8)
 
 # # %%
