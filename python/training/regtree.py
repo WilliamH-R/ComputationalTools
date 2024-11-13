@@ -18,9 +18,6 @@ sm = SMOTE(random_state=42)
 df_train, df_meta_train = sm.fit_resample(df_train, df_meta_train)
 df_test, df_meta_test = sm.fit_resample(df_test, df_meta_test)
 
-
-
-
 # attributes = ['HE4', 'CEA']
 attributes = ['UA','CEA','AST','GLO','BUN','HE4']
 attributes = ['HE4','LYM%','Ca','PDW','GLO']

@@ -17,7 +17,7 @@ df = pd.concat([df_clean, df_meta], axis=1).astype(bool)
 df = df[df['Menopause'] == False].drop('Menopause', axis=1)
 
 # Apply apriori algorithm (get itemsets)
-df_fp = fp.apriori(df, min_support=0.001, use_colnames=True,max_len=3)
+df_fp = fp.apriori(df, min_support=0.0001, use_colnames=True,max_len=3)
 df_fp
 
 # Find association rules (compute association metrics, given itemsets)
