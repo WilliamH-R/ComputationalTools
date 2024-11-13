@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 
 from sklearn import linear_model
 from sklearn.cluster import KMeans
-from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, roc_curve, auc
 from sklearn.tree import DecisionTreeClassifier
 
@@ -26,7 +25,7 @@ os.makedirs(path_to_save, exist_ok=True)
 
 # Load data frames
 age_type_menopause = pd.read_csv('data/non_bm.csv')
-data = pd.read_csv('data/cleaned.csv')
+data = pd.read_csv('data/preprocessed.csv')
 data = pd.concat([data, age_type_menopause[["Age", "Menopause"]]], axis=1)
 
 # Get first 235 rows for training
@@ -41,7 +40,7 @@ test_labels_df = age_type_menopause["TYPE"].iloc[235:]
 subsets = [
     data.columns.tolist(),                                                # All features
     ["ALB", "HGB", "RBC", "TP"],                                          # Apriori subset
-    ['ALB', 'HGB', 'HCT', 'LYM%', 'BASO%', 'PCT', 'TP', 'PLT'],           # PCA subset
+    ['ALB', 'HE4', 'HCT', 'BASO%', 'PLT', 'PCT', 'LYM%', 'HGB'],           # PCA subset
     ["Menopause", "Age", "AFP", "CEA", "HE4", "CA19-9", "LYM%", "CO2CP"], # Article, 8 subset
     ["HE4", "CEA"]                                                        # Article, 2 subset
     # Add more subsets as needed
@@ -87,10 +86,6 @@ for i, subset in enumerate(subsets):
     # Select subset of columns for training and testing sets
     train_subset = train_df[subset]
     test_subset = test_df[subset]
-
-    # Logtransform the data which is not menopause
-    train_subset = train_subset.apply(lambda x: np.log(x + 0.00001) if x.name != "Menopause" else x)
-    test_subset = test_subset.apply(lambda x: np.log(x + 0.00001) if x.name != "Menopause" else x)
     
     # Define a dictionary of models to evaluate
     models = {

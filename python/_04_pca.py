@@ -107,20 +107,22 @@ os.makedirs(path_to_save, exist_ok=True)
 
 # Load data
 age_type_menopause = pd.read_csv('data/non_bm.csv')
-age_type_menopause['TYPE'] = age_type_menopause['TYPE'].replace({0: 'Benign Ovarian Tumor', 1: 'Ovarian Cancer'})
-df = pd.read_csv('data/cleaned.csv')
+age_type_menopause['TYPE'] = age_type_menopause['TYPE'].replace({0: 'Cancer', 1: 'Benign'})
+
+# Standardize age
+age_type_menopause['Age'] = (age_type_menopause['Age'] - age_type_menopause['Age'].mean()) / age_type_menopause['Age'].std()
+
+df = pd.read_csv('data/preprocessed.csv')
 df = pd.concat([df, age_type_menopause['Age']], axis=1) # add age such it is also standardized for PCA
 
 # Take only first 235 rows for training
 age_type_menopause = age_type_menopause.iloc[:235, :]
 df = df.iloc[:235, :]
 
-# Scale data
-df_scaled = StandardScaler().fit_transform(df)
-df_scaled = pd.DataFrame(df_scaled, columns=df.columns)
+print(df.head())
 
 # Add menopause such that it is used in PCA
-df_scaled = pd.concat([df_scaled, age_type_menopause['Menopause']], axis=1)
+df_scaled = pd.concat([df, age_type_menopause['Menopause']], axis=1)
 
 # Apply PCA
 pca = PCA()

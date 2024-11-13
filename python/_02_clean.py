@@ -85,3 +85,6 @@ def clean():
 
 if __name__ == "__main__":
     df_bm, bm_dict, df_non_bm = clean()
+
+# Check if there is Nan values in df_preprocessed
+print(df_bm.isna().sum().sum())

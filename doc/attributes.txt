@@ -8,7 +8,7 @@ ALB, LYM#, BASO%, LYM%
 
 PCA attributes
 --------------
-'ALB', 'HGB', 'HCT', 'LYM%', 'BASO%', 'PCT', 'TP', 'PLT'
+'ALB', 'HE4', 'HCT', 'BASO%', 'PLT', 'PCT', 'LYM%', 'HGB'
 
 
 

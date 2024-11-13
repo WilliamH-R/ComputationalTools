@@ -16,7 +16,13 @@ def preprocess():
     cols_to_transform = ["ALP", "ALT", "AST", "CEA", "DBIL", "EO#", "EO%", "GGT", "HE4", "IBIL", "TBIL", "UA"]
 
     for col in cols_to_transform:
-        df[col] = np.log(df[col] + np.min(df[df[col] != 0]) / 10)
+        # Ensure the column has no negative values before transforming
+        min_value = df[df[col] > 0][col].min()
+
+        if min_value < 0:
+            raise ValueError(f"Column {col} contains negative values. Log transformation is not possible.")
+
+        df[col] = np.log(df[col] + df[df[col] > 0][col].min() / 10)
 
     # Standardize all data
     df = (df - df.mean()) / df.std()
