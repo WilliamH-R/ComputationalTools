@@ -39,7 +39,7 @@ test_labels_df = age_type_menopause["TYPE"].iloc[235:]
 # Specify the subsets of columns you want to use
 subsets = [
     data.columns.tolist(),                                                # All features
-    ["ALB", "HGB", "RBC", "TP"],                                          # Apriori subset
+    ['CA125', 'ALT', 'ALP', 'HE4', 'AST', 'CO2CP'],                                          # Apriori subset
     ['ALB', 'HE4', 'HCT', 'BASO%', 'PLT', 'PCT', 'LYM%', 'HGB'],           # PCA subset
     ["Menopause", "Age", "AFP", "CEA", "HE4", "CA19-9", "LYM%", "CO2CP"], # Article, 8 subset
     ["HE4", "CEA"]                                                        # Article, 2 subset

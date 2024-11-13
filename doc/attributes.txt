@@ -1,8 +1,6 @@
-Apriori attributes
+Apriori attributess
 ------------------
-ALB, LYM#, BASO%, LYM%
-
-
+'CA125', 'ALT', 'ALP', 'HE4', 'AST', 'CO2CP'     
 
 
 

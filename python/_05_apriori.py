@@ -6,18 +6,18 @@ import networkx as nx
 from matplotlib import pyplot as plt
 
 # Load and process data
-df_clean = pd.read_csv('../data/cleaned.csv')
+df_clean = pd.read_csv('../data/preprocessed.csv')
 df_clean = df_clean.iloc[235:]
 df_clean = df_clean.apply(lambda x: np.where(x > np.percentile(x, 50), 1, 0)).astype(bool)
-df_meta  = pd.read_csv('../data/non_bm.csv')[['TYPE', 'Menopause']].astype(bool)
+df_meta  = pd.read_csv('../data/non_bm.csv')[['TYPE']].astype(bool)
+df_meta['TYPE'] = ~df_meta['TYPE']
 df_meta  = df_meta.iloc[235:]
 
 # concatenate dataframes
 df = pd.concat([df_clean, df_meta], axis=1).astype(bool)
-df = df[df['Menopause'] == False].drop('Menopause', axis=1)
 
 # Apply apriori algorithm (get itemsets)
-df_fp = fp.apriori(df, min_support=0.0001, use_colnames=True,max_len=3)
+df_fp = fp.apriori(df, min_support=0.0001, use_colnames=True,max_len=4)
 df_fp
 
 # Find association rules (compute association metrics, given itemsets)
