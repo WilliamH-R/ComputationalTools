@@ -3,7 +3,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
 import os
 import sys
 
@@ -11,90 +10,12 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from adjustText import adjust_text
 from _99_functions import get_project_root
+from _99_functions import plot_pca_cat_w_loadings
+from _99_functions import plot_pca_cont_w_loadings
 
-# %%
-# Functions
-def plot_pca_cat_w_loadings(pcs_df, pca, features, color, save_path, top_n=8, scale_loading=5):
-    # To get the variance explained on axis
-    explained_variance_ratio = pca.explained_variance_ratio_
-
-    # Get the PCA loadings (components) and calculate their vector lengths
-    loadings = pca.components_.T * np.sqrt(pca.explained_variance_) * scale_loading
-    loading_lengths = np.sqrt(loadings[:, 0]**2 + loadings[:, 1]**2)
-
-    # Take the number of most important loadings to display 
-    top_indices = np.argsort(loading_lengths)[-top_n:]
-
-    plt.figure(figsize=(8, 6))
-
-    # PC1 vs PC2 scatter plot
-    sns.scatterplot(data=pcs_df, x='PC1', y='PC2', hue=color, palette='viridis', s=50)
-
-    # Set axis titles with explained variance
-    plt.xlabel(f'Principal Component 1 ({explained_variance_ratio[0]:.2%} variance)', fontsize=14)
-    plt.ylabel(f'Principal Component 2 ({explained_variance_ratio[1]:.2%} variance)', fontsize=14)
-    plt.title(f'PCA of Iris Dataset (PC1 vs PC2) with Top {top_n} Loadings', fontsize=16)
-    plt.axhline(0, color='gray', linestyle='--', linewidth=0.5)
-    plt.axvline(0, color='gray', linestyle='--', linewidth=0.5)
-
-    # Add the most important loadings as arrows (vectors)
-    texts = []
-    for i in top_indices:
-        plt.arrow(0, 0, loadings[i, 0], loadings[i, 1], color='r', width = 0.05, alpha=0.5, head_width=0.05, head_length=0.05)
-        text = plt.text(loadings[i, 0], loadings[i, 1], features[i], color='darkred', ha='center', va='center')
-        texts.append(text)
-
-    # Automatically adjust text to avoid overlap
-    adjust_text(texts, only_move={'points': 'xy', 'texts': 'xy'}, arrowprops=dict(arrowstyle='-', color='gray', lw=0.5))
-
-
-    # Save the plot with the top loadings
-    plt.grid(True)
-    #plt.show()
-    plt.savefig(save_path)
-    plt.close()
-
-def plot_pca_cont_w_loadings(pcs_df, pca, features, color, save_path, top_n=8, scale_loading=5):
-    # To get the variance explained on axis
-    explained_variance_ratio = pca.explained_variance_ratio_
-
-    # Get the PCA loadings (components) and calculate their vector lengths
-    loadings = pca.components_.T * np.sqrt(pca.explained_variance_) * scale_loading
-    loading_lengths = np.sqrt(loadings[:, 0]**2 + loadings[:, 1]**2)
-
-    # Take the number of most important loadings to display 
-    top_indices = np.argsort(loading_lengths)[-top_n:]
-
-    plt.figure(figsize=(8, 6))
-
-    # PC1 vs PC2 scatter plot
-    scatter = plt.scatter(pcs_df['PC1'], pcs_df['PC2'], c=pcs_df[color], cmap='viridis', s=50)
-
-    # Add color bar to represent the scale of 'color'
-    plt.colorbar(scatter, label=color)
-
-    # Set axis titles with explained variance
-    plt.xlabel(f'Principal Component 1 ({explained_variance_ratio[0]:.2%} variance)', fontsize=14)
-    plt.ylabel(f'Principal Component 2 ({explained_variance_ratio[1]:.2%} variance)', fontsize=14)
-    plt.title(f'PCA of Iris Dataset (PC1 vs PC2) with Top {top_n} Loadings', fontsize=16)
-    plt.axhline(0, color='gray', linestyle='--', linewidth=0.5)
-    plt.axvline(0, color='gray', linestyle='--', linewidth=0.5)
-
-    # Add the most important loadings as arrows (vectors)
-    texts = []
-    for i in top_indices:
-        plt.arrow(0, 0, loadings[i, 0], loadings[i, 1], color='r', width = 0.05, alpha=0.5, head_width=0.05, head_length=0.05)
-        text = plt.text(loadings[i, 0], loadings[i, 1], features[i], color='darkred', ha='center', va='center')
-        texts.append(text)
-
-    # Automatically adjust text to avoid overlap
-    adjust_text(texts, only_move={'points': 'xy', 'texts': 'xy'}, arrowprops=dict(arrowstyle='-', color='gray', lw=0.5))
-
-    # Save the plot with the top loadings
-    plt.grid(True)
-    #plt.show()
-    plt.savefig(save_path)
-    plt.close()
+##### DECIDE ON WHICH DATA SPLIT TO USE #####
+# Use either "predefined" or "custom"
+split = "custom"
 
 # %%
 # Set the project root folder
@@ -102,24 +23,37 @@ project_root = get_project_root()
 os.chdir(project_root)
 
 # Path to save images, either predfined split or custom split
-path_to_save = 'results/pca_pre_split' # 'results/models_custom_split'
+if split == "predefined":
+    path_to_save = 'results/pca_pre_split'
+elif split == "custom":
+    path_to_save = 'results/pca_custom_split'
+else:
+    print(f"'split' must be either 'predefined' or 'custom', not {split}")
+    sys.exit(1)
 os.makedirs(path_to_save, exist_ok=True)
 
-# Load data
-age_type_menopause = pd.read_csv('data/non_bm.csv')
+### Load data
+if split == "predefined":
+    df = pd.read_csv('data/preprocessed.csv')
+    age_type_menopause = pd.read_csv('data/non_bm.csv')
+
+elif split == "custom":
+    df = pd.read_csv('data/preprocessed_custom_split.csv')
+    age_type_menopause = pd.read_csv('data/non_bm_custom_split.csv')
+
+
+# Replace 0 and 1 with 'Cancer' and 'Benign' in the 'TYPE' column
 age_type_menopause['TYPE'] = age_type_menopause['TYPE'].replace({0: 'Cancer', 1: 'Benign'})
 
 # Standardize age
 age_type_menopause['Age'] = (age_type_menopause['Age'] - age_type_menopause['Age'].mean()) / age_type_menopause['Age'].std()
 
-df = pd.read_csv('data/preprocessed.csv')
-df = pd.concat([df, age_type_menopause['Age']], axis=1) # add age such it is also standardized for PCA
+# Add age such that it is used in PCA
+df = pd.concat([df, age_type_menopause['Age']], axis=1)
 
 # Take only first 235 rows for training
 age_type_menopause = age_type_menopause.iloc[:235, :]
 df = df.iloc[:235, :]
-
-print(df.head())
 
 # Add menopause such that it is used in PCA
 df_scaled = pd.concat([df, age_type_menopause['Menopause']], axis=1)
@@ -141,7 +75,9 @@ cumulative_explained_variance = np.cumsum(explained_variance_ratio)
 
 plt.figure(figsize=(8, 6))
 plt.plot(range(1, len(cumulative_explained_variance) + 1), cumulative_explained_variance, marker='o', linestyle='--', color='b')
-plt.title('Cumulative Explained Variance by Principal Components', fontsize=16)
+# Wierdly enough, plt.suptitle is the main title
+plt.suptitle('Cumulative Explained Variance by Principal Components', y=0.95, fontsize=16) # fiddle with y to ensure the two titles do not overlap
+plt.title(f'Using {split} split', fontsize=10)
 plt.xlabel('Number of Principal Components', fontsize=14)
 plt.ylabel('Cumulative Explained Variance', fontsize=14)
 plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
@@ -168,9 +104,10 @@ plt.figure(figsize=(10, 6))
 plt.barh(loading_df['Feature'], loading_df['Loading Magnitude'], color='skyblue')
 plt.xlabel('Loading Magnitude')
 plt.ylabel('Features')
-plt.title('Feature Contributions to PC1 and PC2')
+# Wierdly enough, plt.suptitle is the main title
+plt.title(f'Using {split} split', fontsize=10)
+plt.suptitle('Feature Contributions to PC1 and PC2', y=0.95, fontsize=16) # fiddle with y to ensure the two titles do not overlap
 plt.gca().invert_yaxis()  # To have the largest loading at the top
-plt.tight_layout()
 # plt.show()
 plt.savefig(f"{path_to_save}/pca_loadings_magnitude.png")
 plt.close()
@@ -186,6 +123,7 @@ plot_pca_cat_w_loadings(pcs_df = pcs_df,
                         features = df_scaled.columns,
                         color = 'TYPE',
                         save_path = f"{path_to_save}/pc1_vs_pc2_type.png",
+                        split = split,
                         top_n=8)
 
 # %%
@@ -195,6 +133,7 @@ plot_pca_cat_w_loadings(pcs_df = pcs_df,
                         features = df_scaled.columns,
                         color = 'Menopause',
                         save_path = f"{path_to_save}/pc1_vs_pc2_menopause.png",
+                        split = split,
                         top_n=8)
 
 # %%
@@ -204,6 +143,7 @@ plot_pca_cont_w_loadings(pcs_df = pcs_df,
                          features = df_scaled.columns,
                          color = 'Age',
                          save_path = f"{path_to_save}/pc1_vs_pc2_age.png",
+                         split = split,
                          top_n=8)
 
 # # %%

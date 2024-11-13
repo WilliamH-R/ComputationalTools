@@ -15,17 +15,32 @@ from scipy.optimize import linear_sum_assignment
 
 from _99_functions import get_project_root
 
+##### DECIDE ON WHICH DATA SPLIT TO USE #####
+# Use either "predefined" or "custom"
+split = "custom"
+
 # Set the project root folder
 project_root = get_project_root()
 os.chdir(project_root)
 
+
 # Path to save images, either predfined split or custom split
-path_to_save = 'results/models_pre_split' # 'results/models_custom_split'
+if split == "predefined":
+    path_to_save = 'results/models_pre_split'
+elif split == "custom":
+    path_to_save = 'results/models_custom_split'
+else:
+    print(f"'split' must be either 'predefined' or 'custom', not {split}")
+    sys.exit(1)
 os.makedirs(path_to_save, exist_ok=True)
 
-# Load data frames
-age_type_menopause = pd.read_csv('data/non_bm.csv')
-data = pd.read_csv('data/preprocessed.csv')
+### Load data
+if split == "predefined":
+    data = pd.read_csv('data/preprocessed.csv')
+    age_type_menopause = pd.read_csv('data/non_bm.csv')
+elif split == "custom":
+    data = pd.read_csv('data/preprocessed_custom_split.csv')
+    age_type_menopause = pd.read_csv('data/non_bm_custom_split.csv')
 data = pd.concat([data, age_type_menopause[["Age", "Menopause"]]], axis=1)
 
 # Get first 235 rows for training
@@ -39,8 +54,8 @@ test_labels_df = age_type_menopause["TYPE"].iloc[235:]
 # Specify the subsets of columns you want to use
 subsets = [
     data.columns.tolist(),                                                # All features
-    ['CA125', 'ALT', 'ALP', 'HE4', 'AST', 'CO2CP'],                                          # Apriori subset
-    ['ALB', 'HE4', 'HCT', 'BASO%', 'PLT', 'PCT', 'LYM%', 'HGB'],           # PCA subset
+    ['CA125', 'ALT', 'ALP', 'HE4', 'AST', 'CO2CP'],                       # Apriori subset
+    ['ALB', 'HE4', 'HCT', 'BASO%', 'PLT', 'PCT', 'LYM%', 'HGB'],          # PCA subset
     ["Menopause", "Age", "AFP", "CEA", "HE4", "CA19-9", "LYM%", "CO2CP"], # Article, 8 subset
     ["HE4", "CEA"]                                                        # Article, 2 subset
     # Add more subsets as needed
@@ -126,7 +141,8 @@ for i, subset in enumerate(subsets):
     plt.plot([0, 1], [0, 1], 'k--', lw=3)
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
-    plt.title(f'ROC Curve for {subset_names[i]}')
+    plt.suptitle(f'ROC Curve for {subset_names[i]}', y=0.965, fontsize=16) # fiddle with y to ensure the two titles do not overlap
+    plt.title(f'Using {split} split', fontsize=10)
     plt.legend(title="AUC", loc="lower right")
     plt.savefig(f'{path_to_save}/roc_{subset_file_names[i]}_{i+1}.png')
     plt.close()
