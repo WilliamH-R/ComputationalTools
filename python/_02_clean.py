@@ -1,7 +1,6 @@
 """
 Data wrangling
 """
-
 from _01_load import load
 from IPython.display import display
 import pandas as pd
