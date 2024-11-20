@@ -6,11 +6,11 @@ import networkx as nx
 from matplotlib import pyplot as plt
 
 # Load and process data
-df_clean = pd.read_csv('../data/preprocessed.csv')
+df_clean = pd.read_csv('data/preprocessed.csv')
 df_clean = df_clean.iloc[235:]
 df_clean = df_clean.apply(lambda x: np.where(x > np.percentile(x, 50), 1, 0)).astype(bool)
-df_meta  = pd.read_csv('../data/non_bm.csv')[['TYPE']].astype(bool)
-df_meta['TYPE'] = ~df_meta['TYPE']
+df_meta  = pd.read_csv('data/non_bm.csv')[['TYPE']].astype(bool)
+df_meta['TYPE'] = ~df_meta['TYPE'] 
 df_meta  = df_meta.iloc[235:]
 
 # concatenate dataframes
@@ -42,7 +42,6 @@ for _, row in top_rules.iterrows():
      
 
 all_nodes = pd.Series(all_nodes)
-all_nodes.value_counts()
+print(all_nodes.value_counts())
 
 
-# %%

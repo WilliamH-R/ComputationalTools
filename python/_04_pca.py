@@ -15,7 +15,7 @@ from _99_functions import plot_pca_cont_w_loadings
 
 ##### DECIDE ON WHICH DATA SPLIT TO USE #####
 # Use either "predefined" or "custom"
-split = "custom"
+split = "predefined"
 
 # %%
 # Set the project root folder

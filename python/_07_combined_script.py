@@ -17,7 +17,7 @@ from _99_functions import get_project_root
 
 ##### DECIDE ON WHICH DATA SPLIT TO USE #####
 # Use either "predefined" or "custom"
-split = "custom"
+split = "predefined"
 
 # Set the project root folder
 project_root = get_project_root()

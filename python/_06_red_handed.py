@@ -45,7 +45,6 @@ colors_test_custom = colors_test_custom.replace(1, 0.4)
 colors_test_custom = colors_test_custom.replace(0, 1)
 
 # Plot
-sns.set(style="whitegrid")
 fig, axs = plt.subplots(2,3, figsize=(18, 10), gridspec_kw={'hspace': 0.2})
 axs = axs.flatten()
 for ax in axs:
