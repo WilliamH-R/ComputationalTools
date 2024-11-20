@@ -6,9 +6,7 @@ import numpy as np
 import os
 import sys
 
-from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
-from adjustText import adjust_text
 from _99_functions import get_project_root
 from _99_functions import plot_pca_cat_w_loadings
 from _99_functions import plot_pca_cont_w_loadings
@@ -67,6 +65,7 @@ pcs_df = pd.DataFrame(pcs_data, columns=[f'PC{i+1}' for i in range(pcs_data.shap
 
 # Add age_type_menopause to use the columns for colouring
 pcs_df = pd.concat([pcs_df, age_type_menopause], axis=1)
+pcs_df['Menopause'] = pcs_df['Menopause'].replace({0: 'Pre', 1: 'Post'})
 
 #%%
 # 1. Plot cumulative explained variance
