@@ -17,7 +17,7 @@ from _99_functions import get_project_root
 
 ##### DECIDE ON WHICH DATA SPLIT TO USE #####
 # Use either "predefined" or "custom"
-split = "predefined"
+split = "custom"
 
 # Set the project root folder
 project_root = get_project_root()
@@ -93,7 +93,7 @@ def align_labels(true_labels, predicted_labels):
     cm = confusion_matrix(true_labels, predicted_labels)
     _, col_ind = linear_sum_assignment(-cm)
     aligned_labels = np.zeros_like(predicted_labels)
-    for k in range(2):
+    for k in range(2): 
         aligned_labels[predicted_labels == col_ind[k]] = k
     return aligned_labels
 

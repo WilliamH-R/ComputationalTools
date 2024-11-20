@@ -47,7 +47,7 @@ def new_split():
     df_meta1 = df_concat[["TYPE", "Age", "Menopause"]]
 
     # Split data sets into training and testing
-    df2, df3 = train_test_split(df_concat, test_size=0.325, stratify=df_meta1["TYPE"])
+    df2, df3 = train_test_split(df_concat, test_size=0.325, stratify=df_meta1["TYPE"], random_state=42)
 
     # Construct the meta data sets
     df_meta2 = df2[["TYPE", "Age", "Menopause"]]

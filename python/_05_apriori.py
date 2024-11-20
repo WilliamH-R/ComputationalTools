@@ -29,7 +29,7 @@ top_rules = df_conf[df_conf['consequents'].apply(lambda x: 'TYPE' in x)].sort_va
 top_rules = top_rules[top_rules['confidence']<1][:25]
 
 #%% 
-top_rules#[['antecedents', 'consequents', 'antecedent support', 'consequent support','support','confidence']]
+print(top_rules)#[['antecedents', 'consequents', 'antecedent support', 'consequent support','support','confidence']]
 
 #%%
 # Add nodes and edges
