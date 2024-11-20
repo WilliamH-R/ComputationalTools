@@ -5,6 +5,7 @@ import sys
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import font_manager
 
 from sklearn import linear_model
 from sklearn.cluster import KMeans
@@ -55,7 +56,9 @@ test_labels_df = age_type_menopause["TYPE"].iloc[235:]
 subsets = [
     data.columns.tolist(),                                                # All features
     ['CA125', 'ALT', 'ALP', 'HE4', 'AST', 'CO2CP'],                       # Apriori subset
+    ['CA125', 'ALT', 'ALP', 'HE4', 'AST', 'CO2CP', 'CEA'],                # Apriori subset + CEA
     ['ALB', 'HE4', 'HCT', 'BASO%', 'PLT', 'PCT', 'LYM%', 'HGB'],          # PCA subset
+    ['ALB', 'HE4', 'HCT', 'BASO%', 'PLT', 'PCT', 'LYM%', 'HGB', 'CEA'],   # PCA subset + CEA
     ["Menopause", "Age", "AFP", "CEA", "HE4", "CA19-9", "LYM%", "CO2CP"], # Article, 8 subset
     ["HE4", "CEA"]                                                        # Article, 2 subset
     # Add more subsets as needed
@@ -64,7 +67,9 @@ subsets = [
 subset_names = [
     "All Features",
     "Apriori Subset",
+    "Apriori Subset + CEA",
     "PCA Subset",
+    "PCA Subset + CEA",
     "Article, subset of 8",
     "Article, subset of 2"
     # Add more subset names as needed
@@ -73,7 +78,9 @@ subset_names = [
 subset_file_names = [
     "all_features",
     "apriori",
+    "apriori_cea",
     "pca",
+    "pca_cea",
     "subset_eight",
     "subset_two"
     # Add more subset names as needed
@@ -143,6 +150,6 @@ for i, subset in enumerate(subsets):
     plt.ylabel('True Positive Rate')
     plt.suptitle(f'ROC Curve for {subset_names[i]}', y=0.965, fontsize=16) # fiddle with y to ensure the two titles do not overlap
     plt.title(f'Using {split} split', fontsize=10)
-    plt.legend(title="AUC", loc="lower right")
+    plt.legend(title="AUC", loc="lower right", title_fontproperties=font_manager.FontProperties(weight='bold'))
     plt.savefig(f'{path_to_save}/roc_{subset_file_names[i]}_{i+1}.png')
     plt.close()
