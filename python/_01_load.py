@@ -9,7 +9,6 @@ import os
 from _99_functions import get_project_root
 
 def load():
-
     # Set the project root folder
     project_root = get_project_root()
     os.chdir(project_root)
