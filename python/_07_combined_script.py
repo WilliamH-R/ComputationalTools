@@ -52,11 +52,15 @@ def main(split):
 
     # Specify the subsets of columns you want to use
     subsets = [
-        data.columns.tolist(),                                                # All features
-        ['CA125', 'ALT', 'ALP', 'HE4', 'AST', 'CO2CP'],                       # Apriori subset
-        ['CA125', 'ALT', 'ALP', 'HE4', 'AST', 'CO2CP', 'CEA'],                # Apriori subset + CEA
-        ['ALB', 'HE4', 'HCT', 'BASO%', 'PLT', 'PCT', 'LYM%', 'HGB'],          # PCA subset
-        ['ALB', 'HE4', 'HCT', 'BASO%', 'PLT', 'PCT', 'LYM%', 'HGB', 'CEA'],   # PCA subset + CEA
+        data.columns.tolist(),                                                # All features                       
+        ['HE4', 'CA125', 'BASO%', 'TBIL', 'AST'],                             # Apriori Predefined Subset
+        ['HE4', 'CA125', 'BASO%', 'TBIL', 'AST', 'CEA'],                      # Apriori Predefined Subset + CEA
+        ['HE4', 'TBIL', 'CA125', 'BASO%', 'DBIL','IBIL'],                     # Apriori Custom Subset
+        ['HE4', 'TBIL', 'CA125', 'BASO%', 'DBIL','IBIL', 'CEA'],              # Apriori Custom Subset + CEA
+        ['ALB', 'HE4', 'HCT', 'BASO%', 'PLT', 'PCT', 'LYM%', 'HGB'],          # PCA Predefined Subset
+        ['ALB', 'HE4', 'HCT', 'BASO%', 'PLT', 'PCT', 'LYM%', 'HGB', 'CEA'],   # PCA Predefined Subset + CEA
+        ['HE4'], # PCA Custom Subset
+        ['HE4', 'CEA'], # PCA Custom Subset + CEA
         ["Menopause", "Age", "AFP", "CEA", "HE4", "CA19-9", "LYM%", "CO2CP"], # Article, 8 subset
         ["HE4", "CEA"]                                                        # Article, 2 subset
         # Add more subsets as needed
@@ -64,10 +68,14 @@ def main(split):
 
     subset_names = [
         "All Features",
-        "Apriori Subset",
-        "Apriori Subset + CEA",
-        "PCA Subset",
-        "PCA Subset + CEA",
+        "Apriori Predefined Subset",
+        "Apriori Predefined Subset + CEA",
+        "Apriori Custom Subset",
+        "Apriori Custom Subset + CEA",
+        "PCA Predefined Subset",
+        "PCA Predefined Subset + CEA",
+        "PCA Custopm Subset",
+        "PCA Custom Subset + CEA",
         "Article, subset of 8",
         "Article, subset of 2"
         # Add more subset names as needed
@@ -75,10 +83,14 @@ def main(split):
 
     subset_file_names = [
         "all_features",
-        "apriori",
-        "apriori_cea",
-        "pca",
-        "pca_cea",
+        "apriori_pre",
+        "apriori_pre_cea",
+        "apriori_custom",
+        "apriori_custom_cea",
+        "pca_pre",
+        "pca_pre_cea",
+        "pca_custom",
+        "pca_custom_cea",
         "subset_eight",
         "subset_two"
         # Add more subset names as needed
