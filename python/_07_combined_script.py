@@ -59,8 +59,8 @@ def main(split):
         ['HE4', 'TBIL', 'CA125', 'BASO%', 'DBIL','IBIL', 'CEA'],              # Apriori Custom Subset + CEA
         ['ALB', 'HE4', 'HCT', 'BASO%', 'PLT', 'PCT', 'LYM%', 'HGB'],          # PCA Predefined Subset
         ['ALB', 'HE4', 'HCT', 'BASO%', 'PLT', 'PCT', 'LYM%', 'HGB', 'CEA'],   # PCA Predefined Subset + CEA
-        ['HE4'], # PCA Custom Subset
-        ['HE4', 'CEA'], # PCA Custom Subset + CEA
+        ['HGB', 'HCT', 'ALB', 'IBIL', 'TBIL', 'HE4', 'LYM%', 'GLU.'],         # PCA Custom Subset
+        ['HGB', 'HCT', 'ALB', 'IBIL', 'TBIL', 'HE4', 'LYM%', 'GLU.', 'CEA'],  # PCA Custom Subset + CEA
         ["Menopause", "Age", "AFP", "CEA", "HE4", "CA19-9", "LYM%", "CO2CP"], # Article, 8 subset
         ["HE4", "CEA"]                                                        # Article, 2 subset
         # Add more subsets as needed
