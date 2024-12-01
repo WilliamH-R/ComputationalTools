@@ -74,7 +74,7 @@ def main(split):
         "Apriori Custom Subset + CEA",
         "PCA Predefined Subset",
         "PCA Predefined Subset + CEA",
-        "PCA Custopm Subset",
+        "PCA Custom Subset",
         "PCA Custom Subset + CEA",
         "Article, subset of 8",
         "Article, subset of 2"
