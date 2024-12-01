@@ -33,7 +33,10 @@ if __name__ == "__main__":
     run_script("python/_04_pca.py", ["--split", "custom"])
 
     print('\n'+"-"*100+'\n\n'+'A-priori'+'\n\n'+"-"*100+'\n')
-    run_script("python/_05_apriori.py")
+    run_script("python/_05_apriori.py", ["--split", "predefined"])
+
+    print('\n'+"-"*100+'\n\n'+'A-priori'+'\n\n'+"-"*100+'\n')
+    run_script("python/_05_apriori.py", ["--split", "custom"])
 
     print('\n'+"-"*100+'\n\n'+'Caught Red Handed'+'\n\n'+"-"*100+'\n')
     run_script("python/_06_red_handed.py")
